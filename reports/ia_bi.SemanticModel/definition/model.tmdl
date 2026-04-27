@@ -12,3 +12,5 @@ annotation PBI_ProTooling = ["DevMode"]
 
 ref cultureInfo pt-BR
 
+ 
+measure 'Faturamento Total' = SUM('vendas_v1'[Faturamento]) 
