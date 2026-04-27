@@ -1,0 +1,17 @@
+﻿name: Deploy Power BI
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login Azure
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+      - name: Deploy to PBI
+        run: |
+          TOKEN=$(az account get-access-token --resource https://analysis.windows.net/powerbi/api --query accessToken -o tsv)
+          curl -X POST "https://api.powerbi.com/v1.0/myorg/groups/${{ secrets.PBI_WORKSPACE_ID }}/imports?datasetDisplayName=RelatorioIA" -H "Authorization: Bearer $TOKEN" -F "file=@ia_bi.pbip"
